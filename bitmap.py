@@ -9,26 +9,39 @@ class Bitmap(object):
     num_sets_bits = None
     nbytes = None
 
-    def __init__(self, dtype):
+    def __init__(self, dtype, size=8):
         if self.num_sets_bits is None:
             Bitmap.dtype = dtype
             Bitmap.nbytes = np.dtype(dtype).itemsize * 8
             Bitmap._init_num_set_bits()
-        self.data = np.zeros(1, dtype=Bitmap.dtype)
+        self.data = np.zeros(np.ceil(size / 8).astype(int), dtype=Bitmap.dtype)
         self.count = 0
 
     def add(self, bit):
         if self.count / self.nbytes >= len(self.data):
-            self.data.resize(len(self.data) * 2)
-        item = self.count // self.nbytes
-        pos = self.count % self.nbytes
-        self.data[item] |= bit << pos
+            self.resize(len(self.data) * 2)
+        self.set(self.count, bit)
         self.count += 1
 
-    def get(self,n):
+    def get(self, n):
+        if n >= len(self.data) * 8:
+            self.resize(np.ceil(n / 8 + 1).astype(int))
         item = n // self.nbytes
         pos = n % self.nbytes
         return self.data[item] >> pos & 1
+
+    def set(self, n, val):
+        if n >= len(self.data) * 8:
+            self.resize(np.ceil(n / 8 + 1).astype(int))
+        item = n // self.nbytes
+        pos = n % self.nbytes
+        if val == 0:
+            self.data[item] &= ~(1 << pos)
+        else:
+            self.data[item] |= 1 << pos
+
+    def resize(self, new_size):
+        self.data.resize(new_size)
 
     def print(self):
         for item in self.data:
