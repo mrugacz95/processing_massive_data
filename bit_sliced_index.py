@@ -1,58 +1,60 @@
-import random
-
 import numpy as np
+
+from bitmap import Bitmap
+from timing import timing
 
 
 class BitSlicedIndex(object):
-    DTYPE = np.uint8
-    nbytes = np.dtype(DTYPE).itemsize * 8
-    num_sets_bits = None
+    def __init__(self, dtype):
+        self.nbytes = np.dtype(dtype).itemsize * 8
+        self.bitmaps = []
+        for _ in range(self.nbytes):
+            self.bitmaps.append(Bitmap(dtype))
 
-    def __init__(self):
-        if self.num_sets_bits is None:
-            BitSlicedIndex._init_num_set_bits()
-        self.data = np.zeros(1, dtype=np.uint8)
-        self.count = 0
-
-    def add(self, bit):
-        if self.count / 8 >= len(self.data):
-            self.data.resize(len(self.data) * 2)
-        item = self.count // 8
-        pos = self.count % 8
-        self.data[item] |= bit << pos
-        self.count += 1
-
-    def print(self):
-        for item in self.data:
-            for pos in range(self.nbytes):
-                print((item & 1 << pos) >> pos, end='')
-            print()
-
+    @timing
     def sum(self):
-        return np.sum([BitSlicedIndex.num_sets_bits[byte] for byte in self.data])
+        mask = np.fromfunction(lambda x: 2**x, (self.nbytes,), dtype=np.uint32)
+        ones = np.array([bitmap.sum() for idx, bitmap in enumerate(self.bitmaps)])
+        return np.sum(mask * ones)
 
-    @staticmethod
-    def count_ones(n):
-        count = 0
-        while n != 0:
-            n &= (n - 1)
-            count += 1
-        return count
+    def add(self, n):
+        for i in range(self.nbytes):
+            self.bitmaps[i].add(n >> i & 1)
 
-    @staticmethod
-    def _init_num_set_bits():
-        BitSlicedIndex.num_sets_bits = np.zeros(2 ** BitSlicedIndex.nbytes, dtype=np.uint8)
-        for i in range(2 ** BitSlicedIndex.nbytes):
-            BitSlicedIndex.num_sets_bits[i] = BitSlicedIndex.count_ones(i)
+
+@timing
+def standard_sum(data):
+    std_sum = 0
+    for number in data:
+        std_sum += number
+    return std_sum
+
+
+@timing
+def python_sum(data):
+    return sum(data)
+
+
+@timing
+def numpy_sum(data):
+    return np.sum(data.astype(np.uint64))
+
+
+def main():
+    NUM = 10000
+    dtype = np.uint16  # or np.uint16
+    data = np.random.randint(0, np.iinfo(dtype).max, NUM, dtype=dtype)
+    # data = np.full(NUM, 13, dtype=np.uint8).reshape(NUM)
+
+    bsi = BitSlicedIndex(dtype)
+    [bsi.add(x) for x in data]
+    idx_sum = bsi.sum()
+    np_sum = numpy_sum(data)
+    p_sum = python_sum(data)
+    std_sum = standard_sum(data)
+    assert idx_sum == np_sum == p_sum == std_sum, f'Wrong sum {idx_sum} != {np_sum}'
+    print('Ok')
 
 
 if __name__ == '__main__':
-    bi = BitSlicedIndex()
-    count = 0
-    for i in range(200):
-        bit = random.randint(0, 1)
-        count += bit
-        bi.add(bit)
-    bit_count = bi.sum()
-    assert bit_count == count, f'Not equal: {bit_count} != {count}'
-    print('Ok')
+    main()
