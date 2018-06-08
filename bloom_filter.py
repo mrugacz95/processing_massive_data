@@ -3,7 +3,7 @@ import numpy as np
 from sympy import nextprime
 
 from bitmap import Bitmap
-
+import progressbar
 
 class BloomFilter:
     DEBUG = False
@@ -42,15 +42,11 @@ class BloomFilter:
 
 
 def main():
-    # n = 10000
-    n = 1000
-    # num_range = 100000000
-    num_range = 100000
-    # factor = 10
-    p = 0.1
-    # m = round(factor * n)
-    m = np.ceil(-n * np.log(p) / (np.log(2) ** 2)).astype(int)
-    k = np.ceil(m / n * np.log(2)).astype(int)
+    n = 10000
+    num_range = 100000000
+    factor = 10
+    m = round(factor * n)
+    k = 1
     bf = BloomFilter(k, m)
     full_set = set()
 
@@ -59,7 +55,8 @@ def main():
         bf.add(num)
         full_set.add(num)
     tp = tn = fn = fp = 0
-    for key in range(num_range + 1):
+    bar = progressbar.ProgressBar()
+    for key in bar(range(num_range)):
         # key = random.randint(1,num_range)
         containsBF = key in bf
         containsHS = key in full_set
