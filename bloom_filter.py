@@ -8,10 +8,10 @@ import progressbar
 class BloomFilter:
     DEBUG = False
 
-    def __init__(self, k, size):
+    def __init__(self, k, size, num_range):
         self.k = k
         self.size = size
-        self.p = nextprime(self.size)
+        self.p = nextprime(num_range)
         self.hash_functions = []
         for _ in range(k):
             self.hash_functions.append(self._random_hash_function())
@@ -43,11 +43,11 @@ class BloomFilter:
 
 def main():
     n = 10000
-    num_range = 100000000
+    num_range = 1000000
     factor = 10
     m = round(factor * n)
-    k = 1
-    bf = BloomFilter(k, m)
+    k = 7
+    bf = BloomFilter(k, m, num_range)
     full_set = set()
 
     for _ in range(n):
@@ -72,6 +72,7 @@ def main():
     print(f'TN: {tn}')
     print(f'FN: {fn}')
     print(f'FP: {fp}')
+    print('fp/(fp+tn)', fp/(fp+tn))
 
 
 if __name__ == '__main__':

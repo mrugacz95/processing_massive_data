@@ -38,7 +38,7 @@ def simple_count():
 def bloom_count():
     size = 1000000
     k = 1
-    bf = BloomFilter(k, size)
+    bf = BloomFilter(k, size, 1000000)
     count = 0
     for song in read_data():
         if song not in bf:
@@ -49,8 +49,8 @@ def bloom_count():
 
 def bloom_count_many_hash():
     size = 1000000
-    k = 1000
-    bf = BloomFilter(k, size)
+    k = 10
+    bf = BloomFilter(k, size, 1000000)
     count = 0
     for song in read_data():
         if song not in bf:
@@ -88,10 +88,12 @@ class FlajoletMartin(object):
 
 
 def flajolet_martin_count():
-    fm = FlajoletMartin(2 ** 32, 2, 1)
+    fm = FlajoletMartin(2 ** 32, 5, 2)
     print('FlajoletMartin', fm.count(read_data()))
     # FlajoletMartin 262144
 
 
 if __name__ == '__main__':
     simple_count()
+    bloom_count()
+    flajolet_martin_count()
