@@ -1,0 +1,2 @@
+val x = sc.broadcast(sc.textFile("x.txt").map( x=> {  val t =x.split(", "); (t(1).toDouble)}).collect())
+sc.textFile("M.txt").map(x => {val t = x.split(", "); (t(0).toInt, t(1).toInt, t(2).toDouble)}).map{case(i,j,a) => (i,a*x.value(j-1))}.reduceByKey(_+_).toDF().orderBy("_1").show()
