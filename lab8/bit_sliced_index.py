@@ -1,7 +1,7 @@
 import numpy as np
 
 from lab8.bitmap import Bitmap
-from timing import timing
+from lab8.timing import timing
 
 
 class BitSlicedIndex(object):
