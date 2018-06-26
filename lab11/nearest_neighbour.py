@@ -4,7 +4,7 @@ from collections import defaultdict
 import numpy as np
 import progressbar
 
-DATA = 'C:/Users/mruga/Documents\PMD/facts.csv'
+DATA = 'C:/Users/mruga/Documents/PMD/facts.csv'
 
 
 def main():

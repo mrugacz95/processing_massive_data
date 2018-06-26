@@ -1,9 +1,11 @@
 import random
+
 import numpy as np
+import progressbar
 from sympy import nextprime
 
-from bitmap import Bitmap
-import progressbar
+from lab8.bitmap import Bitmap
+
 
 class BloomFilter:
     DEBUG = False
@@ -40,6 +42,11 @@ class BloomFilter:
                 return False
         return True
 
+    def aprox_count(self):
+        count = self.bitmap.sum()
+        print(f"count: {count}/{self.size}")
+        return self.size / self.k * np.log(self.size / count)
+
 
 def main():
     n = 10000
@@ -72,7 +79,7 @@ def main():
     print(f'TN: {tn}')
     print(f'FN: {fn}')
     print(f'FP: {fp}')
-    print('fp/(fp+tn)', fp/(fp+tn))
+    print('fp/(fp+tn)', fp / (fp + tn))
 
 
 if __name__ == '__main__':

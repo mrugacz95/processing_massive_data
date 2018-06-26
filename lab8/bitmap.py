@@ -2,8 +2,6 @@ import random
 
 import numpy as np
 
-from timing import timing
-
 
 class Bitmap(object):
     num_sets_bits = None

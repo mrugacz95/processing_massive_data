@@ -1,0 +1,4 @@
+http://www.cs.put.poznan.pl/kdembczynski/lectures/data/all-shakespeare.zip
+http://www.cs.put.poznan.pl/kdembczynski/lectures/data/M.txt
+http://www.cs.put.poznan.pl/kdembczynski/lectures/data/x.txt
+http://www.cs.put.poznan.pl/kdembczynski/lectures/data/v.txt

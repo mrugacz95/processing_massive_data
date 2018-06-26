@@ -1,6 +1,6 @@
 import numpy as np
 
-from bitmap import Bitmap
+from lab8.bitmap import Bitmap
 from timing import timing
 
 
@@ -42,10 +42,8 @@ def numpy_sum(data):
 
 def main():
     NUM = 10000
-    dtype = np.uint16  # or np.uint16
+    dtype = np.uint16  # or np.uint8
     data = np.random.randint(0, np.iinfo(dtype).max, NUM, dtype=dtype)
-    # data = np.full(NUM, 13, dtype=np.uint8).reshape(NUM)
-
     bsi = BitSlicedIndex(dtype)
     [bsi.add(x) for x in data]
     idx_sum = bsi.sum()
